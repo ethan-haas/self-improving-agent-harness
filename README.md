@@ -45,7 +45,3 @@ Python · PowerShell · Claude Code · multi-agent orchestration · sandboxed ex
 
 ## Status
 Working — runs multi-day autonomous experiments across algorithmic and software tasks.
-
----
-*No secrets are committed; environment files are gitignored. This README describes the
-architecture; operational/host scripts are environment-specific.*
