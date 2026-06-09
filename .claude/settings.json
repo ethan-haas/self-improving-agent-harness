@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "Write(./bench/**)",
+      "Edit(./bench/**)",
+      "Write(./archive/**)",
+      "Edit(./archive/**)",
+      "Write(./host/**)",
+      "Edit(./host/**)",
+      "Write(./holdout/**)",
+      "Read(./holdout/**)",
+      "Write(./.claude/agents/**)",
+      "Edit(./.claude/agents/**)",
+      "Write(./.claude/hooks/**)",
+      "Edit(./.claude/hooks/**)",
+      "Write(./.claude/commands/**)",
+      "Edit(./.claude/commands/**)",
+      "Write(./.claude/settings.json)",
+      "Edit(./.claude/settings.json)",
+      "Write(./LESSONS.md)",
+      "Edit(./LESSONS.md)",
+      "Bash(icacls *:*)",
+      "Bash(Set-Acl *:*)",
+      "Bash(attrib -r *:*)",
+      "Bash(git commit *--no-verify*:*)",
+      "Bash(git push *--force*:*)",
+      "Bash(rm -rf /:*)"
+    ],
+    "allow": [
+      "Read(./**)",
+      "Write(./workspace/**)",
+      "Edit(./workspace/**)",
+      "Write(./agenta/tasks/**)",
+      "Edit(./agenta/tasks/**)",
+      "Write(./agenta/infra/staged/**)",
+      "Edit(./agenta/infra/staged/**)",
+      "Write(./agenta/infra/lessons-inbox/**)",
+      "Edit(./agenta/infra/lessons-inbox/**)",
+      "Write(./agenta/infra/critic-inbox/**)",
+      "Edit(./agenta/infra/critic-inbox/**)",
+      "Write(./agenta/infra/outcomes/**)",
+      "Edit(./agenta/infra/outcomes/**)",
+      "Write(./agenta/infra/orchestrate-queue/**)",
+      "Edit(./agenta/infra/orchestrate-queue/**)",
+      "Write(./agenta/infra/host-patches/**)",
+      "Edit(./agenta/infra/host-patches/**)",
+      "Write(./agenta/sentinels/**)",
+      "Edit(./agenta/sentinels/**)",
+      "Write(./agenta/state/**)",
+      "Edit(./agenta/state/**)",
+      "Write(./logs/*.jsonl)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git revert:*)",
+      "Bash(git show:*)",
+      "Bash(python:*)",
+      "Bash(pytest:*)",
+      "Bash(npm test:*)",
+      "Bash(node:*)",
+      "Bash(powershell -NoProfile -File*append.ps1*:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -NoProfile -File*append.ps1*:*)",
+      "Bash(powershell*reflexion-lessons*append.ps1*:*)"
+    ]
+  },
+  "env": {
+    "ENABLE_TOOL_SEARCH": "auto:5",
+    "AGENTA_GENERATION": "",
+    "AGENTA_PARENT": "",
+    "AGENTA_MODE": "subscription-gui"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {"type": "command", "command": "powershell -ExecutionPolicy Bypass -NoProfile -File \"$CLAUDE_PROJECT_DIR/.claude/hooks/sessionstart/check-triggers.ps1\""}
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {"type": "command", "command": "powershell -ExecutionPolicy Bypass -NoProfile -File \"$CLAUDE_PROJECT_DIR/.claude/hooks/pretooluse/bash-guard.ps1\""}
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {"type": "command", "command": "powershell -ExecutionPolicy Bypass -NoProfile -File \"$CLAUDE_PROJECT_DIR/.claude/hooks/pretooluse/path-guard.ps1\""},
+          {"type": "command", "command": "powershell -ExecutionPolicy Bypass -NoProfile -File \"$CLAUDE_PROJECT_DIR/.claude/hooks/pretooluse/secret-scan.ps1\""}
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {"type": "command", "command": "powershell -ExecutionPolicy Bypass -NoProfile -File \"$CLAUDE_PROJECT_DIR/.claude/hooks/posttooluse/hack-detector.ps1\""}
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {"type": "command", "command": "powershell -ExecutionPolicy Bypass -NoProfile -File \"$CLAUDE_PROJECT_DIR/.claude/hooks/posttooluse/lineage-tag.ps1\""},
+          {"type": "command", "command": "powershell -ExecutionPolicy Bypass -NoProfile -File \"$CLAUDE_PROJECT_DIR/.claude/hooks/posttooluse/token-accountant.ps1\""}
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "github": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-github"]},
+    "playwright": {"command": "npx", "args": ["-y", "@playwright/mcp@latest"]},
+    "context7": {"command": "npx", "args": ["-y", "@upstash/context7-mcp"]},
+    "sequential-thinking": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]},
+    "postgres-ro": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-postgres"], "env": {"DATABASE_URL": "postgresql://readonly@localhost/agenta"}}
+  }
+}

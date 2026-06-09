@@ -1,0 +1,9 @@
+{
+  "_comment": "Copy to settings.local.json (gitignored). Machine-specific secrets only.",
+  "env": {
+    "HEALTHCHECKS_URL": "https://hc-ping.com/<your-uuid>",
+    "REPORT_EMAIL_TO": "you@example.com",
+    "REPORT_EMAIL_FROM": "agenta@localhost",
+    "SMTP_HOST": "smtp.example.com"
+  }
+}

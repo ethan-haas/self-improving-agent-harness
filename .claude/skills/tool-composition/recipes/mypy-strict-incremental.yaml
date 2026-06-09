@@ -1,0 +1,32 @@
+name: mypy-strict-incremental
+description: Add full type annotations to a Python module until `mypy --strict` reports 0 errors while keeping pytest green.
+task_class: type-annotation hardening | mypy --strict adoption | gradual typing rollout
+tools:
+  - tool: Bash
+    purpose: Run `python -m mypy --strict <module>` to enumerate current error set; capture line + code per finding.
+  - tool: Read
+    purpose: Load target module and its test file to map untyped callsites to required signatures.
+  - tool: Grep
+    purpose: Locate call sites and downstream consumers of each function being annotated; surface inferred argument types.
+  - tool: Edit
+    purpose: Apply per-function type annotation in single-edit hunks; one function per Edit call keeps reviewer diffs reviewable.
+  - tool: Bash
+    purpose: Re-run mypy --strict + pytest after each batch; iterate until errors=0 and tests=green.
+preconditions:
+  - target module compiles (py_compile passes)
+  - tests exist and are green at baseline
+  - mypy installed in target python env (`python -m mypy --version` works)
+  - target module has no `# type: ignore` lines that would mask the count
+postconditions:
+  - `python -m mypy --strict <module>` exit 0 with zero `error:` lines
+  - test count unchanged; all green
+  - no new `Any` introduced (defeats --strict intent; reviewer flags)
+  - no `# type: ignore` markers added
+gotchas:
+  - Mutable default arguments (e.g. `steps=None`) need `T | None = None` not `list[T] = []`.
+  - Generic callable: prefer `Callable[[str], str]` from `collections.abc` over `typing.Callable` for 3.9+ idiom.
+  - Class attributes used in __init__ may need explicit annotation outside __init__ when mypy can't infer (e.g. `steps: list[Callable[[str], str]]`).
+  - `var-annotated` errors on empty literal `{}` / `[]` need explicit `dict[K, V] = {}` annotation.
+replay_hint: For any future "drive mypy --strict errors to zero" task, start with this recipe. Adapt: list the function signatures the tests imply, write all annotations in one diff, run verify once.
+provenance: archive/gen-0007/agent-0001
+verified_metric: 11 mypy errors -> 0, 27/27 tests green, 1 coder iteration

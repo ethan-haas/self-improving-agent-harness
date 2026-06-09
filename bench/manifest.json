@@ -1,0 +1,9 @@
+{
+  "_comment": "Bench manifest. The host runner reads this for direction + runner command. SHA256 of bench tasks is in manifest.sha256 (one line: <hash> <relative-path>).",
+  "direction": "higher_better",
+  "runner": "python bench/run.py",
+  "metric_name": "task_pass_rate",
+  "metric_target": 0.85,
+  "tasks_dir": "bench/tasks",
+  "promotion_threshold": 0.02
+}

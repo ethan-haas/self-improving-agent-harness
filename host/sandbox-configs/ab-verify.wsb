@@ -1,0 +1,26 @@
+﻿<Configuration>
+  <Networking>Disable</Networking>
+  <AudioInput>Disable</AudioInput>
+  <VideoInput>Disable</VideoInput>
+  <ProtectedClient>Enable</ProtectedClient>
+  <ClipboardRedirection>Disable</ClipboardRedirection>
+  <PrinterRedirection>Disable</PrinterRedirection>
+  <MemoryInMB>8192</MemoryInMB>
+  <vGPU>Disable</vGPU>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>C:\Users\<user>\Documents\AgentA\AgentA\workspace\ab-verify</HostFolder>
+      <SandboxFolder>C:\agenta\ab</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>C:\Users\<user>\Documents\AgentA\AgentA\bench</HostFolder>
+      <SandboxFolder>C:\agenta\bench</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>cmd.exe /c "C:\agenta\ab\run-ab.cmd"</Command>
+  </LogonCommand>
+</Configuration>
+
